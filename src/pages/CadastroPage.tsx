@@ -23,7 +23,7 @@ export default function CadastroPage() {
     confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { signUp, signIn } = useAuth();
   const navigate = useNavigate();
 
   const update = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }));
@@ -40,17 +40,13 @@ export default function CadastroPage() {
       toast({ title: 'CPF inválido', variant: 'destructive' });
       return;
     }
-    if (password.length < 6) {
-      toast({ title: 'A senha deve ter pelo menos 6 caracteres', variant: 'destructive' });
-      return;
-    }
     if (password !== confirmPassword) {
       toast({ title: 'As senhas não coincidem', variant: 'destructive' });
       return;
     }
 
     setLoading(true);
-    const { error } = await signUp(email, password, {
+    const { error, session: signUpSession } = await signUp(email, password, {
       nome_completo: nomeCompleto,
       cpf,
       registro_profissional: registroProfissional,
@@ -58,12 +54,28 @@ export default function CadastroPage() {
       categoria_profissional: categoriaProfissional,
       role: 'profissional',
     });
-    setLoading(false);
 
     if (error) {
+      setLoading(false);
       toast({ title: 'Erro ao cadastrar', description: error, variant: 'destructive' });
+      return;
+    }
+
+    if (signUpSession) {
+      setLoading(false);
+      toast({ title: 'Cadastro realizado!', description: 'Conta criada e logada com sucesso.' });
+      navigate('/dashboard');
+      return;
+    }
+
+    const { error: signInError } = await signIn(email, password);
+    setLoading(false);
+
+    if (!signInError) {
+      toast({ title: 'Cadastro realizado!', description: 'Conta criada e logada com sucesso.' });
+      navigate('/dashboard');
     } else {
-      toast({ title: 'Cadastro realizado!', description: 'Verifique seu e-mail para confirmar a conta.' });
+      toast({ title: 'Cadastro realizado!', description: 'Conta criada com sucesso. Faça login para acessar.' });
       navigate('/login');
     }
   };
@@ -126,7 +138,7 @@ export default function CadastroPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Senha *</Label>
-                  <Input type="password" value={form.password} onChange={e => update('password', e.target.value)} placeholder="Mínimo 6 caracteres" required />
+                  <Input type="password" value={form.password} onChange={e => update('password', e.target.value)} placeholder="Digite sua senha" required />
                 </div>
                 <div className="space-y-2">
                   <Label>Confirmar Senha *</Label>

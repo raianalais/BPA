@@ -27,7 +27,7 @@ export default function LoginPage() {
     if (error) {
       toast({ title: 'Erro ao entrar', description: error, variant: 'destructive' });
     } else {
-      navigate('/');
+      navigate('/dashboard');
     }
   };
 
@@ -86,7 +86,7 @@ export default function LoginPage() {
                   Criar conta
                 </Link>
               </div>
-              <Link to="/inicio" className="text-xs text-muted-foreground hover:underline">
+              <Link to="/" className="text-xs text-muted-foreground hover:underline">
                 ← Voltar para a página inicial
               </Link>
             </CardFooter>

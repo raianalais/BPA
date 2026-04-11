@@ -17,10 +17,6 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast({ title: 'A senha deve ter pelo menos 6 caracteres', variant: 'destructive' });
-      return;
-    }
     if (password !== confirmPassword) {
       toast({ title: 'As senhas não coincidem', variant: 'destructive' });
       return;
@@ -32,7 +28,7 @@ export default function ResetPasswordPage() {
       toast({ title: 'Erro ao redefinir senha', description: error, variant: 'destructive' });
     } else {
       toast({ title: 'Senha redefinida com sucesso!' });
-      navigate('/');
+      navigate('/login');
     }
   };
 
@@ -50,7 +46,7 @@ export default function ResetPasswordPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>Nova Senha</Label>
-                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mínimo 6 caracteres" required />
+                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Digite sua nova senha" required />
               </div>
               <div className="space-y-2">
                 <Label>Confirmar Nova Senha</Label>

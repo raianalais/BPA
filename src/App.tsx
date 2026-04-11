@@ -31,6 +31,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               {/* Public routes */}
+              <Route path="/" element={<LandingPage />} />
               <Route path="/inicio" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/cadastro" element={<CadastroPage />} />
@@ -38,7 +39,7 @@ const App = () => (
               <Route path="/reset-password" element={<ResetPasswordPage />} />
 
               {/* Protected routes */}
-              <Route path="/" element={
+              <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <AppLayout><Dashboard /></AppLayout>
                 </ProtectedRoute>

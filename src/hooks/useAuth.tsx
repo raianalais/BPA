@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, metadata: Record<string, string>) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, metadata: Record<string, string>) => Promise<{ error: string | null; session: Session | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
   updatePassword: (password: string) => Promise<{ error: string | null }>;
@@ -36,18 +36,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  const translateAuthError = (message: string | null) => {
+    if (!message) return null;
+
+    if (message.includes('Invalid login credentials')) return 'Credenciais inválidas.';
+    if (message.includes('User not found')) return 'Usuário não encontrado.';
+    if (message.includes('Password should be at least')) return 'A senha deve ter pelo menos 6 caracteres.';
+    if (message.includes('User already registered')) return 'Este e-mail já está cadastrado.';
+    if (message.includes('Invalid password')) return 'Senha inválida.';
+    if (message.includes('Invalid email')) return 'E-mail inválido.';
+    if (message.includes('Password is required')) return 'Senha é obrigatória.';
+    if (message.includes('Email is required')) return 'E-mail é obrigatório.';
+
+    return message;
+  };
+
   const signIn = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error?.message ?? null };
+    return { error: translateAuthError(error?.message ?? null) };
   }, []);
 
   const signUp = useCallback(async (email: string, password: string, metadata: Record<string, string>) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: metadata },
+      options: {
+        data: metadata,
+      },
     });
-    return { error: error?.message ?? null };
+    return { error: translateAuthError(error?.message ?? null), session: data.session ?? null };
   }, []);
 
   const signOut = useCallback(async () => {
@@ -58,12 +75,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
-    return { error: error?.message ?? null };
+    return { error: translateAuthError(error?.message ?? null) };
   }, []);
 
   const updatePassword = useCallback(async (password: string) => {
     const { error } = await supabase.auth.updateUser({ password });
-    return { error: error?.message ?? null };
+    return { error: translateAuthError(error?.message ?? null) };
   }, []);
 
   return (
