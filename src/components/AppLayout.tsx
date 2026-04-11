@@ -1,7 +1,9 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, UserPlus, ClipboardList, FileBarChart, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, ClipboardList, FileBarChart, Menu, X, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,6 +16,7 @@ const navItems = [
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   return (
     <div className="flex min-h-screen">
@@ -59,7 +62,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <div className="border-t border-sidebar-border p-4">
+        <div className="border-t border-sidebar-border p-4 space-y-3">
+          {user && (
+            <div className="text-[11px] text-sidebar-foreground/60 truncate">
+              {user.email}
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start gap-2 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            onClick={signOut}
+          >
+            <LogOut className="h-4 w-4" />
+            Sair
+          </Button>
           <p className="text-[10px] text-sidebar-foreground/40">v1.0 — Sistema BPA</p>
         </div>
       </aside>
