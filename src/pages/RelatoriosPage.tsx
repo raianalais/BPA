@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Download, FileBarChart, Users } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Download, FileBarChart, FileText, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
 function calcularIdade(dataNascimento: string, dataReferencia: string): number {
@@ -34,6 +35,7 @@ export default function RelatoriosPage() {
   const { atendimentos, pacientes, getPaciente, getProfissional } = useApp();
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
+  const [tipoBpa, setTipoBpa] = useState<'geral' | 'BPA-I' | 'BPA-C'>('geral');
 
   const filtered = useMemo(() => {
     if (!dataInicio || !dataFim) return [];
@@ -74,29 +76,59 @@ export default function RelatoriosPage() {
     }).sort((a, b) => a.codigoSUS.localeCompare(b.codigoSUS));
   }, [filtered, getPaciente]);
 
-  function downloadCSV() {
-    if (filtered.length === 0) {
-      toast.error('Não há dados no período selecionado para gerar o relatório.');
-      return;
-    }
+  function getFilteredByTipo() {
+    if (tipoBpa === 'geral') return filtered;
+    return filtered.map(a => ({
+      ...a,
+      procedimentos: a.procedimentos.filter(p => p.classificacao === tipoBpa),
+    })).filter(a => a.procedimentos.length > 0);
+  }
 
-    const header = 'Data,Paciente,CPF/CNS,Profissional,Código SUS,Procedimento,Classificação,Quantidade\n';
-    const rows = filtered.flatMap(a => {
+  function gerarConteudo() {
+    const dados = getFilteredByTipo();
+    const header = 'Data,Paciente,CPF/CNS,Profissional,Código SUS,Procedimento,Classificação,Quantidade';
+    const rows = dados.flatMap(a => {
       const pac = getPaciente(a.pacienteId);
       const prof = getProfissional(a.profissionalId);
       return a.procedimentos.map(p =>
         `${a.dataAtendimento},${pac?.nomeCompleto || ''},${pac?.cpf || pac?.cns || ''},${prof?.nomeCompleto || ''},${p.codigoSUS},${p.descricao},${p.classificacao},${p.quantidade}`
       );
     });
+    return { header, rows };
+  }
 
-    const blob = new Blob([header + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  function downloadCSV() {
+    const dados = getFilteredByTipo();
+    if (dados.length === 0) {
+      toast.error('Não há dados no período selecionado para gerar o relatório.');
+      return;
+    }
+    const { header, rows } = gerarConteudo();
+    const blob = new Blob([header + '\n' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `relatorio-bpa-${dataInicio}-a-${dataFim}.csv`;
+    link.download = `relatorio-bpa-${tipoBpa}-${dataInicio}-a-${dataFim}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    toast.success('Relatório baixado com sucesso!');
+    toast.success('Relatório CSV baixado com sucesso!');
+  }
+
+  function downloadTXT() {
+    const dados = getFilteredByTipo();
+    if (dados.length === 0) {
+      toast.error('Não há dados no período selecionado para gerar o relatório.');
+      return;
+    }
+    const { header, rows } = gerarConteudo();
+    const blob = new Blob([header + '\n' + rows.join('\n')], { type: 'text/plain;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `relatorio-bpa-${tipoBpa}-${dataInicio}-a-${dataFim}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Relatório TXT baixado com sucesso!');
   }
 
   function downloadRelatorioAvancado() {
@@ -182,10 +214,27 @@ export default function RelatoriosPage() {
             </TabsList>
 
             <TabsContent value="geral" className="space-y-4">
-              <div className="flex justify-end">
-                <Button onClick={downloadCSV} disabled={filtered.length === 0} className="gap-2">
-                  <Download className="h-4 w-4" /> Baixar CSV
-                </Button>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <div className="w-full sm:w-48">
+                  <Select value={tipoBpa} onValueChange={(v) => setTipoBpa(v as 'geral' | 'BPA-I' | 'BPA-C')}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Tipo de BPA" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="geral">BPA Geral (todos)</SelectItem>
+                      <SelectItem value="BPA-I">BPA-I (Individualizado)</SelectItem>
+                      <SelectItem value="BPA-C">BPA-C (Consolidado)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={downloadCSV} disabled={filtered.length === 0} className="gap-2">
+                    <Download className="h-4 w-4" /> Baixar CSV
+                  </Button>
+                  <Button onClick={downloadTXT} disabled={filtered.length === 0} variant="outline" className="gap-2">
+                    <FileText className="h-4 w-4" /> Baixar TXT
+                  </Button>
+                </div>
               </div>
               <Card>
                 <CardContent className="p-0">
