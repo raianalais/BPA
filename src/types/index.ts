@@ -13,7 +13,7 @@ export interface Paciente {
   id: string;
   nomeCompleto: string;
   idade: number;
-  sexo: 'M' | 'F' | 'I';
+  sexo: 'M' | 'F';
   dataNascimento: string;
   racaCor: string;
   etnia?: string;
@@ -58,9 +58,9 @@ export const UFS_BRASIL = [
 ] as const;
 
 export const RACAS_CORES = [
-  'Branca', 'Preta', 'Parda', 'Amarela', 'Indígena', 'Sem informação'
+  'Branco(a)', 'Preto(a)', 'Pardo(a)', 'Amarelo(a)', 'Indígena', 'Sem informação'
 ] as const;
 
 export const NACIONALIDADES = [
-  'Brasileira', 'Estrangeira', 'Naturalizada'
+  'Brasileiro(a)', 'Estrangeiro(a)', 'Naturalizado(a)'
 ] as const;

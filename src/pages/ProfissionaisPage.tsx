@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Profissional, UFS_BRASIL } from '@/types';
 import { validarCPF, formatarCPF, validarRegistroProfissional } from '@/lib/validators';
+import { CBO_ODONTOLOGIA } from '@/data/cbo-odontologia';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +23,58 @@ interface FormData {
 }
 
 const emptyForm: FormData = { nomeCompleto: '', cpf: '', registroProfissional: '', ufConselho: '', cbo: '', cnsProfissional: '' };
+
+function CboAutocomplete({ value, onChange, error }: { value: string; onChange: (v: string) => void; error?: string }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState(value);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { setQuery(value); }, [value]);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const suggestions = query.trim()
+    ? CBO_ODONTOLOGIA.filter(c =>
+        c.codigo.includes(query) || c.descricao.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, 8)
+    : CBO_ODONTOLOGIA.slice(0, 8);
+
+  return (
+    <div ref={ref} className="relative">
+      <Label>CBO – Ocupação Profissional *</Label>
+      <Input
+        value={query}
+        onChange={e => { setQuery(e.target.value); onChange(e.target.value); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        placeholder="Digite o código ou nome..."
+        autoComplete="off"
+      />
+      {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
+      {open && suggestions.length > 0 && (
+        <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-border bg-popover shadow-lg">
+          {suggestions.map(c => (
+            <button
+              key={c.codigo}
+              type="button"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-accent transition-colors"
+              onClick={() => { const v = `${c.codigo} - ${c.descricao}`; setQuery(v); onChange(v); setOpen(false); }}
+            >
+              <span className="font-mono text-xs text-muted-foreground">{c.codigo}</span>
+              <span className="text-foreground">{c.descricao}</span>
+              <span className="ml-auto text-[10px] text-muted-foreground">{c.area}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ProfissionaisPage() {
   const { profissionais, addProfissional, updateProfissional, deleteProfissional } = useApp();
@@ -195,11 +248,11 @@ export default function ProfissionaisPage() {
                 </Select>
                 {errors.ufConselho && <p className="mt-1 text-xs text-destructive">{errors.ufConselho}</p>}
               </div>
-              <div>
-                <Label>CBO - Ocupação Profissional *</Label>
-                <Input value={form.cbo} onChange={e => setForm(f => ({ ...f, cbo: e.target.value }))} placeholder="Ex: 2232-08" />
-                {errors.cbo && <p className="mt-1 text-xs text-destructive">{errors.cbo}</p>}
-              </div>
+              <CboAutocomplete
+                value={form.cbo}
+                onChange={v => setForm(f => ({ ...f, cbo: v }))}
+                error={errors.cbo}
+              />
             </div>
             <div>
               <Label>CNS do Profissional</Label>
