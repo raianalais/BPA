@@ -82,7 +82,7 @@ export default function PacientesPage() {
     const data: Omit<Paciente, 'id' | 'criadoEm'> = {
       nomeCompleto: form.nomeCompleto,
       idade,
-      sexo: form.sexo as 'M' | 'F' | 'I',
+      sexo: form.sexo as 'M' | 'F',
       dataNascimento: form.dataNascimento,
       racaCor: form.racaCor,
       etnia: form.racaCor === 'Indígena' ? form.etnia : undefined,
@@ -177,7 +177,7 @@ export default function PacientesPage() {
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.nomeCompleto}</TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      {p.sexo === 'M' ? 'Masculino' : p.sexo === 'F' ? 'Feminino' : 'Ignorado'}
+                      {p.sexo === 'M' ? 'Masculino' : 'Feminino'}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">{new Date(p.dataNascimento + 'T00:00:00').toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell className="hidden md:table-cell">{p.cns}</TableCell>
@@ -225,9 +225,8 @@ export default function PacientesPage() {
                 <Select value={form.sexo} onValueChange={v => setForm(f => ({ ...f, sexo: v }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="M">Masculino</SelectItem>
                     <SelectItem value="F">Feminino</SelectItem>
-                    <SelectItem value="I">Ignorado</SelectItem>
+                    <SelectItem value="M">Masculino</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.sexo && <p className="mt-1 text-xs text-destructive">{errors.sexo}</p>}

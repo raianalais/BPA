@@ -29,7 +29,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6">
-          <img src={logoBpa} alt="BPA" className="h-8 w-8 object-contain" />
+          <img src={logoBpa} alt="BPA" className="h-9 w-9 rounded-lg object-contain" />
           <div>
             <h1 className="text-sm font-bold text-sidebar-foreground">BPA</h1>
             <p className="text-[10px] text-sidebar-foreground/60">Boletim Produção Ambulatorial</p>
