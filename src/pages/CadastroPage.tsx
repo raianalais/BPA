@@ -64,7 +64,7 @@ export default function CadastroPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4 py-8">
       <Card className="w-full max-w-lg shadow-lg">
         <CardHeader className="items-center space-y-3 pb-2">
-          <img src={logoBpaSemFundo} alt="BPA" className="mx-auto h-20 w-auto object-contain" />
+          <img src={logoBpaSemFundo} alt="BPA" className="mx-auto h-28 w-auto object-contain" />
           <CardTitle className="text-2xl text-primary">Criar Conta</CardTitle>
         </CardHeader>
         <CardContent>
