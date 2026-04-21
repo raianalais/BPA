@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import logoBpa from '@/assets/logo-bpa.png';
+import logoBpaSemFundo from '@/assets/logo-bpa-semfundo.png';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
@@ -37,7 +37,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="items-center space-y-4 pb-2">
-          <img src={logoBpa} alt="BPA" className="h-16 w-16 object-contain" />
+          <img src={logoBpaSemFundo} alt="BPA" className="mx-auto h-20 w-auto object-contain" />
           <CardTitle className="text-2xl text-primary">Entrar no BPA</CardTitle>
         </CardHeader>
         <CardContent>
