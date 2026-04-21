@@ -37,7 +37,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="items-center space-y-4 pb-2">
-          <img src={logoBpaSemFundo} alt="BPA" className="mx-auto h-20 w-auto object-contain" />
+          <img src={logoBpaSemFundo} alt="BPA" className="mx-auto h-28 w-auto object-contain" />
           <CardTitle className="text-2xl text-primary">Entrar no BPA</CardTitle>
         </CardHeader>
         <CardContent>

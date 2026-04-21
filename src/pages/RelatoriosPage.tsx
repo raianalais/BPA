@@ -297,14 +297,13 @@ export default function RelatoriosPage() {
             {/* ===== RELATÓRIO GERAL ===== */}
             <TabsContent value="geral" className="space-y-4">
               <Card>
-                <CardHeader><CardTitle className="text-sm">Cabeçalho Relatório Geral (usa cabeçalho BPA-C)</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-sm">Cabeçalho Relatório Geral</CardTitle></CardHeader>
                 <CardContent>
-                  <p className="text-xs text-muted-foreground mb-2">Preencha os campos de cabeçalho na aba BPA-C. Eles serão usados aqui automaticamente.</p>
-                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    {cnesBpaC && <span className="rounded bg-muted px-2 py-1">CNES: {cnesBpaC}</span>}
-                    {nomeEstabelecimentoBpaC && <span className="rounded bg-muted px-2 py-1">{nomeEstabelecimentoBpaC}</span>}
-                    {ufBpaC && <span className="rounded bg-muted px-2 py-1">UF: {ufBpaC}</span>}
-                    {mesAnoBpaC && <span className="rounded bg-muted px-2 py-1">{mesAnoBpaC}</span>}
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <div><Label>CNES</Label><Input value={cnesBpaC} onChange={e => setCnesBpaC(e.target.value)} placeholder="Código CNES" /></div>
+                    <div><Label>Nome do Estabelecimento</Label><Input value={nomeEstabelecimentoBpaC} onChange={e => setNomeEstabelecimentoBpaC(e.target.value)} /></div>
+                    <div><Label>UF</Label><Input value={ufBpaC} onChange={e => setUfBpaC(e.target.value)} maxLength={2} placeholder="Ex: SP" /></div>
+                    <div><Label>Mês/Ano</Label><Input value={mesAnoBpaC} onChange={e => setMesAnoBpaC(e.target.value)} placeholder="Ex: 04/2026" /></div>
                   </div>
                 </CardContent>
               </Card>
