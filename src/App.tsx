@@ -5,6 +5,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppProvider } from "@/contexts/AppContext";
 import AppLayout from "@/components/AppLayout";
+import LandingPage from "@/pages/LandingPage";
+import LoginPage from "@/pages/LoginPage";
+import CadastroPage from "@/pages/CadastroPage";
 import Dashboard from "@/pages/Dashboard";
 import ProfissionaisPage from "@/pages/ProfissionaisPage";
 import PacientesPage from "@/pages/PacientesPage";
@@ -14,6 +17,8 @@ import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
 
+const withLayout = (node: React.ReactNode) => <AppLayout>{node}</AppLayout>;
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -21,16 +26,17 @@ const App = () => (
       <Sonner />
       <AppProvider>
         <BrowserRouter>
-          <AppLayout>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/profissionais" element={<ProfissionaisPage />} />
-              <Route path="/pacientes" element={<PacientesPage />} />
-              <Route path="/atendimentos" element={<AtendimentosPage />} />
-              <Route path="/relatorios" element={<RelatoriosPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AppLayout>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/cadastro" element={<CadastroPage />} />
+            <Route path="/home" element={withLayout(<Dashboard />)} />
+            <Route path="/profissionais" element={withLayout(<ProfissionaisPage />)} />
+            <Route path="/pacientes" element={withLayout(<PacientesPage />)} />
+            <Route path="/atendimentos" element={withLayout(<AtendimentosPage />)} />
+            <Route path="/relatorios" element={withLayout(<RelatoriosPage />)} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </AppProvider>
     </TooltipProvider>
