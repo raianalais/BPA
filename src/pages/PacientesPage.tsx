@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useApp } from '@/contexts/AppContext';
-import { Paciente, RACAS_CORES, NACIONALIDADES } from '@/types';
+import { Paciente } from '@/types';
 import { validarCPF, formatarCPF, validarCNS } from '@/lib/validators';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Pencil, Search } from 'lucide-react';
@@ -14,86 +13,50 @@ import { toast } from 'sonner';
 
 interface FormData {
   nomeCompleto: string;
-  idade: string;
-  sexo: string;
   dataNascimento: string;
-  racaCor: string;
-  etnia: string;
-  cns: string;
   cpf: string;
-  nacionalidade: string;
-  cep: string;
-  logradouro: string;
-  numero: string;
-  bairro: string;
-  complemento: string;
+  cns: string;
 }
 
-const emptyForm: FormData = {
-  nomeCompleto: '', idade: '', sexo: '', dataNascimento: '',
-  racaCor: '', etnia: '', cns: '', cpf: '', nacionalidade: '',
-  cep: '', logradouro: '', numero: '', bairro: '', complemento: '',
-};
-
-function calcularIdade(dataNascimento: string): number {
-  const hoje = new Date();
-  const nasc = new Date(dataNascimento + 'T00:00:00');
-  let idade = hoje.getFullYear() - nasc.getFullYear();
-  const m = hoje.getMonth() - nasc.getMonth();
-  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
-  return idade;
-}
+const emptyForm: FormData = { nomeCompleto: '', dataNascimento: '', cpf: '', cns: '' };
 
 export default function PacientesPage() {
   const { pacientes, addPaciente, updatePaciente } = useApp();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(emptyForm);
-  const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'documento', string>>>({});
   const [search, setSearch] = useState('');
 
   const filtered = pacientes.filter(p =>
     p.nomeCompleto.toLowerCase().includes(search.toLowerCase()) ||
     (p.cpf && p.cpf.includes(search)) ||
-    p.cns.includes(search)
+    (p.cns && p.cns.includes(search))
   );
 
   function validate(): boolean {
-    const e: Record<string, string> = {};
+    const e: Partial<Record<keyof FormData | 'documento', string>> = {};
     if (!form.nomeCompleto.trim()) e.nomeCompleto = 'Nome é obrigatório';
     if (!form.dataNascimento) e.dataNascimento = 'Data de nascimento é obrigatória';
-    if (!form.sexo) e.sexo = 'Sexo é obrigatório';
-    if (!form.racaCor) e.racaCor = 'Raça/Cor é obrigatória';
-    if (form.racaCor === 'Indígena' && !form.etnia.trim()) e.etnia = 'Etnia é obrigatória para indígenas';
-    if (!validarCNS(form.cns)) e.cns = 'CNS inválido (15 dígitos)';
-    if (!form.nacionalidade) e.nacionalidade = 'Nacionalidade é obrigatória';
-    if (!form.cep.trim()) e.cep = 'CEP é obrigatório';
-    if (!form.logradouro.trim()) e.logradouro = 'Logradouro é obrigatório';
-    if (!form.numero.trim()) e.numero = 'Número é obrigatório';
-    if (!form.bairro.trim()) e.bairro = 'Bairro é obrigatório';
-    if (form.cpf && !validarCPF(form.cpf)) e.cpf = 'CPF inválido';
+    const hasCpf = form.cpf.replace(/\D/g, '').length > 0;
+    const hasCns = form.cns.replace(/\D/g, '').length > 0;
+    if (!hasCpf && !hasCns) {
+      e.documento = 'Informe CPF ou CNS';
+    } else {
+      if (hasCpf && !validarCPF(form.cpf)) e.cpf = 'CPF inválido';
+      if (hasCns && !validarCNS(form.cns)) e.cns = 'CNS inválido';
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
   function handleSubmit() {
     if (!validate()) return;
-    const idade = calcularIdade(form.dataNascimento);
-    const data: Omit<Paciente, 'id' | 'criadoEm'> = {
+    const data = {
       nomeCompleto: form.nomeCompleto,
-      idade,
-      sexo: form.sexo as 'M' | 'F',
       dataNascimento: form.dataNascimento,
-      racaCor: form.racaCor,
-      etnia: form.racaCor === 'Indígena' ? form.etnia : undefined,
-      cns: form.cns.replace(/\D/g, ''),
       cpf: form.cpf.replace(/\D/g, '') || undefined,
-      nacionalidade: form.nacionalidade,
-      cep: form.cep,
-      logradouro: form.logradouro,
-      numero: form.numero,
-      bairro: form.bairro,
-      complemento: form.complemento || undefined,
+      cns: form.cns.replace(/\D/g, '') || undefined,
     };
     if (editingId) {
       updatePaciente(editingId, data);
@@ -112,19 +75,9 @@ export default function PacientesPage() {
     setEditingId(p.id);
     setForm({
       nomeCompleto: p.nomeCompleto,
-      idade: String(p.idade),
-      sexo: p.sexo,
       dataNascimento: p.dataNascimento,
-      racaCor: p.racaCor,
-      etnia: p.etnia || '',
-      cns: p.cns,
       cpf: p.cpf ? formatarCPF(p.cpf) : '',
-      nacionalidade: p.nacionalidade,
-      cep: p.cep || '',
-      logradouro: p.logradouro || '',
-      numero: p.numero || '',
-      bairro: p.bairro || '',
-      complemento: p.complemento || '',
+      cns: p.cns || '',
     });
     setErrors({});
     setDialogOpen(true);
@@ -165,10 +118,9 @@ export default function PacientesPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome</TableHead>
-                  <TableHead className="hidden sm:table-cell">Sexo</TableHead>
                   <TableHead className="hidden sm:table-cell">Data Nasc.</TableHead>
+                  <TableHead className="hidden md:table-cell">CPF</TableHead>
                   <TableHead className="hidden md:table-cell">CNS</TableHead>
-                  <TableHead className="hidden lg:table-cell">Raça/Cor</TableHead>
                   <TableHead className="w-16">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -176,12 +128,9 @@ export default function PacientesPage() {
                 {filtered.map(p => (
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.nomeCompleto}</TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      {p.sexo === 'M' ? 'Masculino' : 'Feminino'}
-                    </TableCell>
                     <TableCell className="hidden sm:table-cell">{new Date(p.dataNascimento + 'T00:00:00').toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell className="hidden md:table-cell">{p.cns}</TableCell>
-                    <TableCell className="hidden lg:table-cell">{p.racaCor}</TableCell>
+                    <TableCell className="hidden md:table-cell">{p.cpf ? formatarCPF(p.cpf) : '—'}</TableCell>
+                    <TableCell className="hidden md:table-cell">{p.cns || '—'}</TableCell>
                     <TableCell>
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(p)}>
                         <Pencil className="h-4 w-4" />
@@ -196,7 +145,7 @@ export default function PacientesPage() {
       </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingId ? 'Editar Paciente' : 'Novo Paciente'}</DialogTitle>
           </DialogHeader>
@@ -206,113 +155,33 @@ export default function PacientesPage() {
               <Input value={form.nomeCompleto} onChange={e => setForm(f => ({ ...f, nomeCompleto: e.target.value }))} />
               {errors.nomeCompleto && <p className="mt-1 text-xs text-destructive">{errors.nomeCompleto}</p>}
             </div>
-
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              <div>
-                <Label>Data de Nascimento *</Label>
-                <Input type="date" value={form.dataNascimento} onChange={e => {
-                  const v = e.target.value;
-                  setForm(f => ({ ...f, dataNascimento: v, idade: v ? String(calcularIdade(v)) : '' }));
-                }} />
-                {errors.dataNascimento && <p className="mt-1 text-xs text-destructive">{errors.dataNascimento}</p>}
-              </div>
-              <div>
-                <Label>Idade</Label>
-                <Input value={form.idade} readOnly className="bg-muted" />
-              </div>
-              <div>
-                <Label>Sexo *</Label>
-                <Select value={form.sexo} onValueChange={v => setForm(f => ({ ...f, sexo: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="F">Feminino</SelectItem>
-                    <SelectItem value="M">Masculino</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.sexo && <p className="mt-1 text-xs text-destructive">{errors.sexo}</p>}
-              </div>
+            <div>
+              <Label>Data de Nascimento *</Label>
+              <Input type="date" value={form.dataNascimento} onChange={e => setForm(f => ({ ...f, dataNascimento: e.target.value }))} />
+              {errors.dataNascimento && <p className="mt-1 text-xs text-destructive">{errors.dataNascimento}</p>}
             </div>
-
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              <div>
-                <Label>Raça/Cor *</Label>
-                <Select value={form.racaCor} onValueChange={v => setForm(f => ({ ...f, racaCor: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                  <SelectContent>
-                    {RACAS_CORES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                {errors.racaCor && <p className="mt-1 text-xs text-destructive">{errors.racaCor}</p>}
-              </div>
-              {form.racaCor === 'Indígena' && (
-                <div>
-                  <Label>Etnia *</Label>
-                  <Input value={form.etnia} onChange={e => setForm(f => ({ ...f, etnia: e.target.value }))} />
-                  {errors.etnia && <p className="mt-1 text-xs text-destructive">{errors.etnia}</p>}
-                </div>
-              )}
-              <div>
-                <Label>Nacionalidade *</Label>
-                <Select value={form.nacionalidade} onValueChange={v => setForm(f => ({ ...f, nacionalidade: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                  <SelectContent>
-                    {NACIONALIDADES.map(n => <SelectItem key={n} value={n}>{n}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                {errors.nacionalidade && <p className="mt-1 text-xs text-destructive">{errors.nacionalidade}</p>}
-              </div>
+            <div>
+              <Label>CPF</Label>
+              <Input
+                value={form.cpf}
+                onChange={e => {
+                  const v = e.target.value.replace(/\D/g, '').slice(0, 11);
+                  setForm(f => ({ ...f, cpf: formatarCPF(v) }));
+                }}
+                placeholder="000.000.000-00"
+              />
+              {errors.cpf && <p className="mt-1 text-xs text-destructive">{errors.cpf}</p>}
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>CNS (Cartão Nacional de Saúde) *</Label>
-                <Input value={form.cns} onChange={e => setForm(f => ({ ...f, cns: e.target.value.replace(/\D/g, '').slice(0, 15) }))} placeholder="000000000000000" />
-                {errors.cns && <p className="mt-1 text-xs text-destructive">{errors.cns}</p>}
-              </div>
-              <div>
-                <Label>CPF</Label>
-                <Input
-                  value={form.cpf}
-                  onChange={e => {
-                    const v = e.target.value.replace(/\D/g, '').slice(0, 11);
-                    setForm(f => ({ ...f, cpf: formatarCPF(v) }));
-                  }}
-                  placeholder="000.000.000-00"
-                />
-                {errors.cpf && <p className="mt-1 text-xs text-destructive">{errors.cpf}</p>}
-              </div>
+            <div>
+              <Label>CNS (Cartão Nacional de Saúde)</Label>
+              <Input
+                value={form.cns}
+                onChange={e => setForm(f => ({ ...f, cns: e.target.value.replace(/\D/g, '').slice(0, 15) }))}
+                placeholder="000000000000000"
+              />
+              {errors.cns && <p className="mt-1 text-xs text-destructive">{errors.cns}</p>}
             </div>
-
-            <div className="border-t border-border pt-4">
-              <p className="mb-3 text-sm font-semibold text-foreground">Endereço</p>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                <div>
-                  <Label>CEP *</Label>
-                  <Input value={form.cep} onChange={e => setForm(f => ({ ...f, cep: e.target.value.replace(/\D/g, '').slice(0, 8) }))} placeholder="00000000" />
-                  {errors.cep && <p className="mt-1 text-xs text-destructive">{errors.cep}</p>}
-                </div>
-                <div className="col-span-2">
-                  <Label>Logradouro *</Label>
-                  <Input value={form.logradouro} onChange={e => setForm(f => ({ ...f, logradouro: e.target.value }))} />
-                  {errors.logradouro && <p className="mt-1 text-xs text-destructive">{errors.logradouro}</p>}
-                </div>
-                <div>
-                  <Label>Número *</Label>
-                  <Input value={form.numero} onChange={e => setForm(f => ({ ...f, numero: e.target.value }))} />
-                  {errors.numero && <p className="mt-1 text-xs text-destructive">{errors.numero}</p>}
-                </div>
-                <div>
-                  <Label>Bairro *</Label>
-                  <Input value={form.bairro} onChange={e => setForm(f => ({ ...f, bairro: e.target.value }))} />
-                  {errors.bairro && <p className="mt-1 text-xs text-destructive">{errors.bairro}</p>}
-                </div>
-                <div>
-                  <Label>Complemento</Label>
-                  <Input value={form.complemento} onChange={e => setForm(f => ({ ...f, complemento: e.target.value }))} />
-                </div>
-              </div>
-            </div>
-
+            {errors.documento && <p className="text-xs text-destructive">{errors.documento}</p>}
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
               <Button onClick={handleSubmit}>{editingId ? 'Salvar' : 'Cadastrar'}</Button>
