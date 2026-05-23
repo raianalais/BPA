@@ -4,16 +4,27 @@ export interface Profissional {
   cpf: string;
   registroProfissional: string;
   ufConselho: string;
-  categoriaProfissional: string;
+  cbo: string;
+  cnsProfissional?: string;
   criadoEm: string;
 }
 
 export interface Paciente {
   id: string;
   nomeCompleto: string;
+  idade: number;
+  sexo: 'M' | 'F';
   dataNascimento: string;
+  racaCor: string;
+  etnia?: string;
+  cns: string;
   cpf?: string;
-  cns?: string;
+  nacionalidade: string;
+  cep?: string;
+  logradouro?: string;
+  numero?: string;
+  bairro?: string;
+  complemento?: string;
   criadoEm: string;
 }
 
@@ -46,9 +57,10 @@ export const UFS_BRASIL = [
   'PA','PB','PE','PI','PR','RJ','RN','RO','RR','RS','SC','SE','SP','TO'
 ] as const;
 
-export const CATEGORIAS_PROFISSIONAIS = [
-  'Cirurgião-Dentista',
-  'Técnico em Saúde Bucal (TSB)',
-  'Auxiliar em Saúde Bucal (ASB)',
-  'Cirurgião-Dentista Especialista',
+export const RACAS_CORES = [
+  'Branco(a)', 'Preto(a)', 'Pardo(a)', 'Amarelo(a)', 'Indígena', 'Sem informação'
+] as const;
+
+export const NACIONALIDADES = [
+  'Brasileiro(a)', 'Estrangeiro(a)', 'Naturalizado(a)'
 ] as const;

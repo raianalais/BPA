@@ -72,22 +72,18 @@ export default {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
         },
-        bpa: {
-          darkblue: "#043E6E",
-          blue: "#0876D6",
-          teal: "#1A827E",
-          mint: "#64CFBB",
-          purple: "#8574C0",
+        purple: {
+          DEFAULT: "hsl(var(--purple))",
+          foreground: "hsl(var(--purple-foreground))",
         },
-      },
-      backgroundImage: {
-        "bpa-gradient":
-          "linear-gradient(135deg, #DCEEFB 0%, #C7E6DC 35%, #D9D4EE 100%)",
-        "bpa-button":
-          "linear-gradient(135deg, #043E6E 0%, #1A827E 50%, #8574C0 100%)",
-        "bpa-icon":
-          "linear-gradient(135deg, #0876D6 0%, #1A827E 60%, #64CFBB 100%)",
-        glass: "linear-gradient(135deg, rgba(200,230,220,0.55), rgba(180,170,210,0.45))",
+        teal: {
+          DEFAULT: "hsl(var(--teal))",
+          foreground: "hsl(var(--teal-foreground))",
+        },
+        cyan: {
+          DEFAULT: "hsl(var(--cyan))",
+          foreground: "hsl(var(--cyan-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
