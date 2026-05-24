@@ -74,7 +74,7 @@ export default function CadastroPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#F5F5F5] px-4 py-8">
+    <div className="relative h-screen overflow-hidden bg-[#F5F5F5] px-4 py-8">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-20 -left-20 h-[420px] w-[420px] rounded-full bg-[#0876D6]/40 blur-[120px]" />
         <div className="absolute top-1/3 left-1/3 h-[460px] w-[460px] rounded-full bg-[#1A827E]/40 blur-[130px]" />
@@ -85,9 +85,9 @@ export default function CadastroPage() {
         <ArrowLeft className="h-7 w-7" />
       </button>
 
-      <div className="relative mx-auto mt-4 grid max-w-6xl items-start gap-10 lg:grid-cols-2">
+      <div className="relative mx-auto mt-4 grid h-[calc(100vh-96px)] max-w-6xl items-start gap-10 lg:grid-cols-2">
         {/* Left */}
-        <div className="space-y-8 lg:sticky lg:top-8">
+        <div className="space-y-8 overflow-y-auto pr-2">
           <img src={logoBpaSemFundo} alt="BPA" className="h-32 w-auto object-contain" />
           <div className="space-y-6">
             <div className="flex items-start gap-4">
@@ -118,9 +118,9 @@ export default function CadastroPage() {
         </div>
 
         {/* Right: glass card */}
-        <div className="rounded-3xl p-8 sm:p-10" style={glassStyle}>
+        <div className="flex h-full flex-col overflow-hidden rounded-3xl p-8 sm:p-10" style={glassStyle}>
           <h1 className="mb-6 text-center text-3xl font-bold text-[#043E6E]">Criar Conta</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto pr-2">
             <div>
               <Label className="mb-1.5 block text-[#043E6E]">Nome Completo *</Label>
               <Input value={form.nomeCompleto} onChange={e => set('nomeCompleto', e.target.value)} style={inputStyle} className="border-0" />
