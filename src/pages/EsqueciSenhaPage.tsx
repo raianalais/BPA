@@ -59,41 +59,14 @@ export default function EsqueciSenhaPage() {
         <ArrowLeft className="h-7 w-7" />
       </button>
 
-      <div className="relative mx-auto mt-4 grid max-w-6xl items-center gap-10 lg:grid-cols-2">
-        {/* Left: logo + info */}
-        <div className="space-y-8">
-          <img src={logoBpaSemFundo} alt="BPA" className="h-32 w-auto object-contain" />
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #1A827E, #0876D6)' }}>
-                <KeyRound className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="mb-1 font-bold text-[#043E6E]">Recuperação Segura</h3>
-                <p className="text-sm leading-relaxed text-[#043E6E]/80">
-                  Enviamos um link exclusivo para o seu e-mail cadastrado, permitindo a redefinição da senha de forma rápida e protegida.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #1A827E, #0876D6)' }}>
-                <MailCheck className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="mb-1 font-bold text-[#043E6E]">Confirmação por E-mail</h3>
-                <p className="text-sm leading-relaxed text-[#043E6E]/80">
-                  Verifique sua caixa de entrada e siga as instruções para criar uma nova senha e retomar o acesso ao sistema.
-                </p>
-              </div>
-            </div>
+      <div className="relative mx-auto flex min-h-[calc(100vh-80px)] max-w-md items-center justify-center">
+        {/* Centered glass card */}
+        <div className="w-full rounded-3xl p-8 sm:p-10" style={glassStyle}>
+          <div className="mb-6 flex justify-center">
+            <img src={logoBpaSemFundo} alt="BPA" className="h-24 w-auto object-contain" />
           </div>
-        </div>
-
-        {/* Right: glass card */}
-        <div className="rounded-3xl p-8 sm:p-10" style={glassStyle}>
           <h1 className="mb-8 text-center text-4xl font-bold text-[#043E6E]">Recuperar Senha</h1>
+
           {sent ? (
             <div className="space-y-6 text-center">
               <p className="text-sm text-[#043E6E]/90">
