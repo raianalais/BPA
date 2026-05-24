@@ -120,7 +120,7 @@ export default function CadastroPage() {
         {/* Right: glass card */}
         <div className="flex h-full flex-col overflow-hidden rounded-3xl p-8 sm:p-10" style={glassStyle}>
           <h1 className="mb-6 text-center text-3xl font-bold text-[#043E6E]">Criar Conta</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="flex-1 space-y-4 overflow-y-auto pr-2">
             <div>
               <Label className="mb-1.5 block text-[#043E6E]">Nome Completo *</Label>
               <Input value={form.nomeCompleto} onChange={e => set('nomeCompleto', e.target.value)} style={inputStyle} className="border-0" />
