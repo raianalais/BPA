@@ -118,7 +118,7 @@ export default function CadastroPage() {
         </div>
 
         {/* Right: glass card */}
-        <div className="rounded-3xl p-8 sm:p-10" style={glassStyle}>
+        <div className="flex h-full flex-col overflow-hidden rounded-3xl p-8 sm:p-10" style={glassStyle}>
           <h1 className="mb-6 text-center text-3xl font-bold text-[#043E6E]">Criar Conta</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
