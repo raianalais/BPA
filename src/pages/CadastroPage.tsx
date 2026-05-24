@@ -74,7 +74,7 @@ export default function CadastroPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#F5F5F5] px-4 py-8">
+    <div className="relative h-screen overflow-hidden bg-[#F5F5F5] px-4 py-8">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-20 -left-20 h-[420px] w-[420px] rounded-full bg-[#0876D6]/40 blur-[120px]" />
         <div className="absolute top-1/3 left-1/3 h-[460px] w-[460px] rounded-full bg-[#1A827E]/40 blur-[130px]" />
@@ -85,9 +85,9 @@ export default function CadastroPage() {
         <ArrowLeft className="h-7 w-7" />
       </button>
 
-      <div className="relative mx-auto mt-4 grid max-w-6xl items-start gap-10 lg:grid-cols-2">
+      <div className="relative mx-auto mt-4 grid h-[calc(100vh-96px)] max-w-6xl items-start gap-10 lg:grid-cols-2">
         {/* Left */}
-        <div className="space-y-8 lg:sticky lg:top-8">
+        <div className="space-y-8 overflow-y-auto pr-2">
           <img src={logoBpaSemFundo} alt="BPA" className="h-32 w-auto object-contain" />
           <div className="space-y-6">
             <div className="flex items-start gap-4">
