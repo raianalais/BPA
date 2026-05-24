@@ -1,15 +1,34 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import logoBpa from '@/assets/logo-bpa.png';
+import logoBpaSemFundo from '@/assets/logo-bpa-semfundo.png';
+import { ArrowLeft, KeyRound, MailCheck } from 'lucide-react';
+
+const glassStyle: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.2)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255,255,255,0.3)',
+  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+};
+
+const inputStyle: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.5)',
+  border: '1px solid rgba(255,255,255,0.5)',
+  borderRadius: '999px',
+  height: '48px',
+  paddingLeft: '20px',
+  paddingRight: '20px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+};
 
 export default function EsqueciSenhaPage() {
   const { resetPassword } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -29,34 +48,98 @@ export default function EsqueciSenhaPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="items-center space-y-3 pb-2">
-          <img src={logoBpa} alt="BPA" className="h-14 w-14 object-contain" />
-          <CardTitle className="text-2xl text-primary">Recuperar Senha</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="relative min-h-screen overflow-hidden bg-[#F5F5F5] px-4 py-8">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-20 -left-20 h-[420px] w-[420px] rounded-full bg-[#0876D6]/40 blur-[120px]" />
+        <div className="absolute top-1/3 left-1/3 h-[460px] w-[460px] rounded-full bg-[#1A827E]/40 blur-[130px]" />
+        <div className="absolute -bottom-20 -right-10 h-[460px] w-[460px] rounded-full bg-[#8574C0]/40 blur-[130px]" />
+      </div>
+
+      <button onClick={() => navigate('/login')} className="relative z-10 text-[#043E6E] hover:opacity-70">
+        <ArrowLeft className="h-7 w-7" />
+      </button>
+
+      <div className="relative mx-auto mt-4 grid max-w-6xl items-center gap-10 lg:grid-cols-2">
+        {/* Left: logo + info */}
+        <div className="space-y-8">
+          <img src={logoBpaSemFundo} alt="BPA" className="h-32 w-auto object-contain" />
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-lg"
+                style={{ background: 'linear-gradient(135deg, #1A827E, #0876D6)' }}>
+                <KeyRound className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="mb-1 font-bold text-[#043E6E]">Recuperação Segura</h3>
+                <p className="text-sm leading-relaxed text-[#043E6E]/80">
+                  Enviamos um link exclusivo para o seu e-mail cadastrado, permitindo a redefinição da senha de forma rápida e protegida.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-lg"
+                style={{ background: 'linear-gradient(135deg, #1A827E, #0876D6)' }}>
+                <MailCheck className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="mb-1 font-bold text-[#043E6E]">Confirmação por E-mail</h3>
+                <p className="text-sm leading-relaxed text-[#043E6E]/80">
+                  Verifique sua caixa de entrada e siga as instruções para criar uma nova senha e retomar o acesso ao sistema.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: glass card */}
+        <div className="rounded-3xl p-8 sm:p-10" style={glassStyle}>
+          <h1 className="mb-8 text-center text-4xl font-bold text-[#043E6E]">Recuperar Senha</h1>
           {sent ? (
-            <div className="space-y-4 text-center">
-              <p className="text-sm text-muted-foreground">Um link de recuperação foi enviado para <strong>{email}</strong>. Verifique sua caixa de entrada.</p>
-              <Link to="/login" className="text-sm font-medium text-primary hover:underline">Voltar ao login</Link>
+            <div className="space-y-6 text-center">
+              <p className="text-sm text-[#043E6E]/90">
+                Um link de recuperação foi enviado para <strong>{email}</strong>. Verifique sua caixa de entrada.
+              </p>
+              <div className="flex justify-center">
+                <Link
+                  to="/login"
+                  className="flex h-12 w-56 items-center justify-center rounded-full text-base font-medium text-white shadow-lg hover:opacity-90"
+                  style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
+                >
+                  Voltar ao login
+                </Link>
+              </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <Label>E-mail</Label>
-                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" />
+                <Label className="mb-2 block text-[#043E6E]">Email</Label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  style={inputStyle}
+                  className="border-0 focus-visible:ring-2 focus-visible:ring-[#0876D6]/40"
+                />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Enviando...' : 'Enviar link de recuperação'}
-              </Button>
-              <p className="text-center text-sm text-muted-foreground">
-                <Link to="/login" className="font-medium text-primary hover:underline">Voltar ao login</Link>
+              <div className="flex justify-center pt-4">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="h-12 w-56 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
+                  style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
+                >
+                  {loading ? 'Enviando...' : 'Enviar link'}
+                </Button>
+              </div>
+              <p className="text-center text-sm text-[#043E6E]/80">
+                Lembrou a senha?{' '}
+                <Link to="/login" className="font-medium text-[#043E6E] underline">Voltar ao login</Link>
               </p>
             </form>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
