@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { Profissional, Paciente, Atendimento } from '@/types';
 import { gerarId } from '@/lib/validators';
 
@@ -18,10 +18,39 @@ interface AppState {
 
 const AppContext = createContext<AppState | null>(null);
 
+const STORAGE_KEYS = {
+  profissionais: 'bpa:profissionais',
+  pacientes: 'bpa:pacientes',
+  atendimentos: 'bpa:atendimentos',
+} as const;
+
+function loadFromStorage<T>(key: string): T[] {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveToStorage<T>(key: string, value: T[]) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error('Erro ao salvar em localStorage:', e);
+  }
+}
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [profissionais, setProfissionais] = useState<Profissional[]>([]);
-  const [pacientes, setPacientes] = useState<Paciente[]>([]);
-  const [atendimentos, setAtendimentos] = useState<Atendimento[]>([]);
+  const [profissionais, setProfissionais] = useState<Profissional[]>(() => loadFromStorage<Profissional>(STORAGE_KEYS.profissionais));
+  const [pacientes, setPacientes] = useState<Paciente[]>(() => loadFromStorage<Paciente>(STORAGE_KEYS.pacientes));
+  const [atendimentos, setAtendimentos] = useState<Atendimento[]>(() => loadFromStorage<Atendimento>(STORAGE_KEYS.atendimentos));
+
+  useEffect(() => { saveToStorage(STORAGE_KEYS.profissionais, profissionais); }, [profissionais]);
+  useEffect(() => { saveToStorage(STORAGE_KEYS.pacientes, pacientes); }, [pacientes]);
+  useEffect(() => { saveToStorage(STORAGE_KEYS.atendimentos, atendimentos); }, [atendimentos]);
 
   const addProfissional = useCallback((p: Omit<Profissional, 'id' | 'criadoEm'>) => {
     setProfissionais(prev => [...prev, { ...p, id: gerarId(), criadoEm: new Date().toISOString() }]);
