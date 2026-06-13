@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, UserPlus, ClipboardList, FileBarChart, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, UserPlus, ClipboardList, FileBarChart, Menu, X, LogOut, UserCircle } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -62,6 +62,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {user && (
             <div className="mb-2 truncate text-[11px] text-sidebar-foreground/60">{user.email}</div>
           )}
+          <NavLink
+            to="/perfil"
+            onClick={() => setSidebarOpen(false)}
+            className={cn(
+              "mb-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
+              location.pathname === '/perfil'
+                ? "bg-sidebar-accent text-sidebar-primary"
+                : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            )}
+          >
+            <UserCircle className="h-4 w-4" /> Perfil
+          </NavLink>
           <button
             onClick={signOut}
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"

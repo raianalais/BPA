@@ -12,6 +12,7 @@ import ProfissionaisPage from "@/pages/ProfissionaisPage";
 import PacientesPage from "@/pages/PacientesPage";
 import AtendimentosPage from "@/pages/AtendimentosPage";
 import RelatoriosPage from "@/pages/RelatoriosPage";
+import PerfilPage from "@/pages/PerfilPage";
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
 import CadastroPage from "@/pages/CadastroPage";
@@ -44,6 +45,7 @@ const App = () => (
                       <Route path="/pacientes" element={<PacientesPage />} />
                       <Route path="/atendimentos" element={<AtendimentosPage />} />
                       <Route path="/relatorios" element={<RelatoriosPage />} />
+                      <Route path="/perfil" element={<PerfilPage />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </AppLayout>
