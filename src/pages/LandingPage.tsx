@@ -117,7 +117,7 @@ export default function LandingPage() {
 
       <div className="relative mx-auto flex max-w-7xl flex-col items-center">
         {/* Logo */}
-        <img src={logoBpaSemFundo} alt="BPA" className="mb-6 h-24 w-auto object-contain drop-shadow-md" />
+        <img src={logoBpaSemFundo} alt="BPA" className="mb-6 h-28 w-auto object-contain drop-shadow-md" />
 
         <div className="grid w-full gap-6 lg:grid-cols-5 lg:items-stretch">
           {/* Left column - Carousel (2/5) */}
