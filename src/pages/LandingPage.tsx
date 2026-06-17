@@ -1,7 +1,22 @@
 import { useNavigate } from 'react-router-dom';
 import logoBpaSemFundo from '@/assets/logo-bpa-semfundo.png';
 import { Button } from '@/components/ui/button';
-import { ClipboardCheck, UserSearch, TrendingUp, FileDown } from 'lucide-react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from '@/components/ui/carousel';
+import {
+  ClipboardCheck,
+  UserSearch,
+  TrendingUp,
+  FileDown,
+  Stethoscope,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const features = [
   {
@@ -26,8 +41,49 @@ const features = [
   },
 ];
 
+const slides = [
+  {
+    icon: Stethoscope,
+    title: 'Sistema BPA',
+    subtitle: 'Gestão odontológica completa para CEO',
+    gradient: 'linear-gradient(135deg, #043E6E, #0876D6)',
+  },
+  {
+    icon: ClipboardCheck,
+    title: 'Atendimentos',
+    subtitle: 'Registro rápido, seguro e organizado',
+    gradient: 'linear-gradient(135deg, #1A827E, #64CFBB)',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Eficiência',
+    subtitle: 'Mais agilidade no dia a dia da equipe',
+    gradient: 'linear-gradient(135deg, #0876D6, #8574C0)',
+  },
+  {
+    icon: FileDown,
+    title: 'Relatórios BPA',
+    subtitle: 'Exportação simples e padronizada',
+    gradient: 'linear-gradient(135deg, #043E6E, #1A827E)',
+  },
+];
+
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    setCurrent(api.selectedScrollSnap());
+    const onSelect = () => setCurrent(api.selectedScrollSnap());
+    api.on('select', onSelect);
+    const interval = setInterval(() => api.scrollNext(), 5000);
+    return () => {
+      api.off('select', onSelect);
+      clearInterval(interval);
+    };
+  }, [api]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#F5F5F5] px-4 py-10">
@@ -39,54 +95,108 @@ export default function LandingPage() {
         <div className="absolute top-10 right-1/4 h-[300px] w-[300px] rounded-full bg-[#64CFBB]/30 blur-[110px]" />
       </div>
 
-      <div className="relative mx-auto flex max-w-5xl flex-col items-center">
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center">
         {/* Logo */}
         <img src={logoBpaSemFundo} alt="BPA" className="mb-6 h-28 w-auto object-contain drop-shadow-md" />
 
-        {/* Glass card */}
-        <div
-          className="w-full rounded-3xl border p-8 sm:p-12"
-          style={{
-            background: 'rgba(255,255,255,0.2)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-          }}
-        >
-          <div className="grid gap-8 sm:grid-cols-2 sm:gap-10">
-            {features.map((f, i) => (
-              <div key={i} className="flex items-start gap-4">
-                <div
-                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-lg"
-                  style={{ background: 'linear-gradient(135deg, #1A827E, #0876D6)' }}
-                >
-                  <f.icon className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="mb-1 text-base font-bold text-[#043E6E]">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-[#043E6E]/80">{f.desc}</p>
-                </div>
-              </div>
-            ))}
+        <div className="grid w-full gap-8 lg:grid-cols-2 lg:items-stretch">
+          {/* Left column - Carousel */}
+          <div
+            className="rounded-3xl border p-6 sm:p-8"
+            style={{
+              background: 'rgba(255,255,255,0.2)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+            }}
+          >
+            <Carousel
+              setApi={setApi}
+              opts={{ loop: true, align: 'start' }}
+              className="relative h-full w-full"
+            >
+              <CarouselContent>
+                {slides.map((s, i) => (
+                  <CarouselItem key={i}>
+                    <div
+                      className="flex aspect-[4/3] w-full flex-col items-center justify-center rounded-2xl p-8 text-center text-white shadow-lg transition-all"
+                      style={{ background: s.gradient }}
+                    >
+                      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                        <s.icon className="h-10 w-10" />
+                      </div>
+                      <h3 className="mb-2 text-2xl font-bold">{s.title}</h3>
+                      <p className="max-w-xs text-sm leading-relaxed opacity-90">{s.subtitle}</p>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2 border-0 bg-white/60 text-[#043E6E] hover:bg-white/80" />
+              <CarouselNext className="right-2 border-0 bg-white/60 text-[#043E6E] hover:bg-white/80" />
+            </Carousel>
+
+            {/* Indicators */}
+            <div className="mt-5 flex items-center justify-center gap-2">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Ir para slide ${i + 1}`}
+                  onClick={() => api?.scrollTo(i)}
+                  className={`h-2 rounded-full transition-all ${
+                    current === i ? 'w-6 bg-[#043E6E]' : 'w-2 bg-[#043E6E]/30'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
-          {/* Buttons */}
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button
-              onClick={() => navigate('/login')}
-              className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
-              style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
-            >
-              Login
-            </Button>
-            <Button
-              onClick={() => navigate('/cadastro')}
-              className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
-              style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
-            >
-              Cadastro
-            </Button>
+          {/* Right column - existing content */}
+          <div
+            className="rounded-3xl border p-8 sm:p-10"
+            style={{
+              background: 'rgba(255,255,255,0.2)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+            }}
+          >
+            <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
+              {features.map((f, i) => (
+                <div key={i} className="flex items-start gap-4">
+                  <div
+                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-lg"
+                    style={{ background: 'linear-gradient(135deg, #1A827E, #0876D6)' }}
+                  >
+                    <f.icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="mb-1 text-base font-bold text-[#043E6E]">{f.title}</h3>
+                    <p className="text-sm leading-relaxed text-[#043E6E]/80">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Button
+                onClick={() => navigate('/login')}
+                className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => navigate('/cadastro')}
+                className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
+              >
+                Cadastro
+              </Button>
+            </div>
           </div>
         </div>
       </div>
