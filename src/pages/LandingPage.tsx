@@ -245,30 +245,7 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
-
-              ))}
-            </div>
-
-            {/* Buttons */}
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button
-                onClick={() => navigate('/login')}
-                className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
-              >
-                Login
-              </Button>
-              <Button
-                onClick={() => navigate('/cadastro')}
-                className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
-              >
-                Cadastro
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
+
   );
 }
