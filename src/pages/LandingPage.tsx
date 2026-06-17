@@ -115,14 +115,14 @@ export default function LandingPage() {
         <div className="absolute top-10 right-1/4 h-[300px] w-[300px] rounded-full bg-[#64CFBB]/30 blur-[110px]" />
       </div>
 
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center">
+      <div className="relative mx-auto flex max-w-7xl flex-col items-center">
         {/* Logo */}
-        <img src={logoBpaSemFundo} alt="BPA" className="mb-6 h-28 w-auto object-contain drop-shadow-md" />
+        <img src={logoBpaSemFundo} alt="BPA" className="mb-6 h-24 w-auto object-contain drop-shadow-md" />
 
-        <div className="grid w-full gap-8 lg:grid-cols-2 lg:items-stretch">
-          {/* Left column - Carousel */}
+        <div className="grid w-full gap-6 lg:grid-cols-5 lg:items-stretch">
+          {/* Left column - Carousel (2/5) */}
           <div
-            className="rounded-3xl border p-6 sm:p-8"
+            className="flex flex-col rounded-3xl border p-5 sm:p-6 lg:col-span-2"
             style={{
               background: 'rgba(255,255,255,0.2)',
               backdropFilter: 'blur(20px)',
@@ -134,19 +134,19 @@ export default function LandingPage() {
             <Carousel
               setApi={setApi}
               opts={{ loop: true, align: 'start' }}
-              className="relative h-full w-full"
+              className="relative w-full"
             >
               <CarouselContent>
                 {slides.map((s, i) => (
                   <CarouselItem key={i}>
                     <div
-                      className="flex aspect-[4/3] w-full flex-col items-center justify-center rounded-2xl p-8 text-center text-white shadow-lg transition-all"
+                      className="flex aspect-[5/4] w-full flex-col items-center justify-center rounded-2xl p-6 text-center text-white shadow-lg transition-all"
                       style={{ background: s.gradient }}
                     >
-                      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                        <s.icon className="h-10 w-10" />
+                      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                        <s.icon className="h-8 w-8" />
                       </div>
-                      <h3 className="mb-2 text-2xl font-bold">{s.title}</h3>
+                      <h3 className="mb-2 text-xl font-bold">{s.title}</h3>
                       <p className="max-w-xs text-sm leading-relaxed opacity-90">{s.subtitle}</p>
                     </div>
                   </CarouselItem>
@@ -157,7 +157,7 @@ export default function LandingPage() {
             </Carousel>
 
             {/* Indicators */}
-            <div className="mt-5 flex items-center justify-center gap-2">
+            <div className="mt-4 flex items-center justify-center gap-2">
               {slides.map((_, i) => (
                 <button
                   key={i}
@@ -170,11 +170,36 @@ export default function LandingPage() {
                 />
               ))}
             </div>
+
+            {/* Dynamic info linked to current slide */}
+            <div
+              key={current}
+              className="mt-5 rounded-2xl border p-5 text-left animate-in fade-in slide-in-from-bottom-2 duration-500"
+              style={{
+                background: 'rgba(255,255,255,0.35)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.4)',
+              }}
+            >
+              <h4 className="mb-1.5 text-base font-bold text-[#043E6E]">
+                {slides[current].info.title}
+              </h4>
+              <p className="mb-3 text-sm leading-relaxed text-[#043E6E]/80">
+                {slides[current].info.desc}
+              </p>
+              <Button
+                variant="ghost"
+                className="h-8 rounded-full px-4 text-xs font-medium text-[#043E6E] hover:bg-[#043E6E]/10"
+              >
+                {slides[current].info.cta}
+              </Button>
+            </div>
           </div>
 
-          {/* Right column - existing content */}
+          {/* Right column - existing content (3/5) */}
           <div
-            className="rounded-3xl border p-8 sm:p-10"
+            className="rounded-3xl border p-7 sm:p-9 lg:col-span-3"
             style={{
               background: 'rgba(255,255,255,0.2)',
               backdropFilter: 'blur(20px)',
@@ -183,7 +208,7 @@ export default function LandingPage() {
               boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
             }}
           >
-            <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
+            <div className="grid gap-6 sm:grid-cols-2 sm:gap-7">
               {features.map((f, i) => (
                 <div key={i} className="flex items-start gap-4">
                   <div
@@ -197,6 +222,30 @@ export default function LandingPage() {
                     <p className="text-sm leading-relaxed text-[#043E6E]/80">{f.desc}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Button
+                onClick={() => navigate('/login')}
+                className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => navigate('/cadastro')}
+                className="h-12 w-48 rounded-full border-0 text-base font-medium text-white shadow-lg hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #043E6E, #1A827E, #8574C0)' }}
+              >
+                Cadastro
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
               ))}
             </div>
 
