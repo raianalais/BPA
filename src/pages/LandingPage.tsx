@@ -47,24 +47,44 @@ const slides = [
     title: 'Sistema BPA',
     subtitle: 'Gestão odontológica completa para CEO',
     gradient: 'linear-gradient(135deg, #043E6E, #0876D6)',
+    info: {
+      title: 'Plataforma completa para CEO',
+      desc: 'Centralize a operação do Centro de Especialidades Odontológicas em um único sistema, com fluxos pensados para a rotina da equipe.',
+      cta: 'Saiba mais',
+    },
   },
   {
     icon: ClipboardCheck,
     title: 'Atendimentos',
     subtitle: 'Registro rápido, seguro e organizado',
     gradient: 'linear-gradient(135deg, #1A827E, #64CFBB)',
+    info: {
+      title: 'Registro de atendimentos sem fricção',
+      desc: 'Cadastre procedimentos, pacientes e profissionais em poucos cliques, com validações automáticas que evitam retrabalho.',
+      cta: 'Ver detalhes',
+    },
   },
   {
     icon: TrendingUp,
     title: 'Eficiência',
     subtitle: 'Mais agilidade no dia a dia da equipe',
     gradient: 'linear-gradient(135deg, #0876D6, #8574C0)',
+    info: {
+      title: 'Eficiência operacional',
+      desc: 'Filtros inteligentes, classificações automáticas e atalhos pensados para reduzir o tempo gasto em tarefas repetitivas.',
+      cta: 'Explorar',
+    },
   },
   {
     icon: FileDown,
     title: 'Relatórios BPA',
     subtitle: 'Exportação simples e padronizada',
     gradient: 'linear-gradient(135deg, #043E6E, #1A827E)',
+    info: {
+      title: 'Relatórios prontos para envio',
+      desc: 'Gere arquivos BPA-C e BPA-I no padrão exigido e exporte por período com poucos cliques, garantindo conformidade.',
+      cta: 'Conhecer relatórios',
+    },
   },
 ];
 
