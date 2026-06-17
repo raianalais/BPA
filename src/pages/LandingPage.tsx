@@ -199,7 +199,7 @@ export default function LandingPage() {
 
           {/* Right column - existing content (3/5) */}
           <div
-            className="rounded-3xl border p-7 sm:p-9 lg:col-span-3"
+            className="flex flex-col justify-center rounded-3xl border p-7 sm:p-9 lg:col-span-3"
             style={{
               background: 'rgba(255,255,255,0.2)',
               backdropFilter: 'blur(20px)',
